@@ -275,10 +275,12 @@
         (else 0)))
 
 (define (listaPuntosTotal numjugador x y matriz)
-  (quicksort (list (puntosHorizontal numjugador x y matriz)
-                   (puntosVerticales numjugador x y matriz)
-                   (puntosDiagonalesPos numjugador x y matriz)
-                   (puntosDiagonalesNeg numjugador x y matriz))))
+  (cond((equal? y -1) '(-1 -1 -1 -1))
+       (else
+           (quicksort (list (puntosHorizontal numjugador x y matriz)
+                            (puntosVerticales numjugador x y matriz)
+                            (puntosDiagonalesPos numjugador x y matriz)
+                            (puntosDiagonalesNeg numjugador x y matriz))))))
 
 (define (generarMatrizDePuntos i numjugador posicionesY matriz)
   (cond ((null? posicionesY) '())
@@ -349,7 +351,6 @@
   (cond ((null? lista) '())
         (else (cons 0 (copiarceros (cdr lista))))))
 
-    
 (define (seleccionarColAI matriz)
   (selector 2 1 matriz))
 
@@ -435,8 +436,10 @@
        (else (mainAux3 matriz (- (juego (car (tamano)) (colorJ)) 1) (colorJ)))))
 
 (define(mainAux3 matriz x color)
-  (dibujarP (* 50 x ) (* 50 (posY? x 0 matriz)) color )
-  (mainAux1 (insertarMatriz x 1 matriz)))
+  (cond ((equal? (posY? x 0 matriz) -1) (mainAux2 matriz)) 
+        (else
+            (dibujarP (* 50 x ) (* 50 (posY? x 0 matriz)) color )
+            (mainAux1 (insertarMatriz x 1 matriz)))))
         
 ;Funcion que envie matriz MxN
 (define(main)
