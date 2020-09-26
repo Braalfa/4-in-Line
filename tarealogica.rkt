@@ -3,14 +3,13 @@
 (require "tareagrafica.rkt")
 
 ;------------------------------------------------------------------------------------------------------------------------------------------------
-;Crear Matriz 
-
+;Funcion para crear las columnas 
 (define (crearColumnas mCont)
   (cond ((= 0 mCont) '())
        (else
         (cons 0 (crearColumnas (- mCont 1))))))
 
-         
+;Funcion para crear la matriz del tamano mxn llena de ceros
 (define(crearMatriz mCont nCont)
   (cond((= 0 nCont) '())
        (else
@@ -209,71 +208,95 @@
 ;; Algoritmo Greedy
   
 
-
+;;Esta funcion da una lista de las elementos en los indices dados por la lista pos, de la lista
 (define (posiciones pos lista)
   (cond((null? pos) '())
        (else (cons (posicion (car pos) lista) (posiciones (cdr pos) lista)))))
 
+;;Esta funcion se encarga de contar los elementos de tipo numjugador que esten a la derecha del punto (x,y) en la matriz.
+;El indice inicial debe de ser 0
 (define (contarHorizontalDerecha i numjugador x y matriz)
   (cond((equal? 3 i) 0)
        ((not (miembro? (encontrar (+ x 1) y matriz) numjugador)) 0)
        (else (+ 1 (contarHorizontalDerecha (+ i 1) numjugador (+ x 1) y matriz)))))
 
+
+;;Esta funcion se encarga de contar los elementos de tipo numjugador que esten a la izquierda del punto (x,y) en la matriz.
+;El indice inicial debe de ser 0
 (define (contarHorizontalIzquierda i numjugador x y matriz)
   (cond((equal? 3 i) 0)
        ((not (miembro? (encontrar (- x 1) y matriz) numjugador)) 0)
        (else (+ 1 (contarHorizontalIzquierda (+ i 1) numjugador (- x 1) y matriz)))))
 
+;;Esta funcion se encarga de contar los elementos de tipo numjugador que esten abajo del punto (x,y) en la matriz.
+;El indice inicial debe de ser 0
 (define (contarVerticalAbajo i numjugador x y matriz)
   (cond((equal? 3 i) 0)
        ((not (miembro? (encontrar x (+ y 1) matriz) numjugador)) 0)
        (else (+ 1 (contarVerticalAbajo (+ i 1) numjugador x (+ y 1) matriz)))))
 
+;;Esta funcion se encarga de contar los elementos de tipo numjugador que esten arriba del punto (x,y) en la matriz.
+;El indice inicial debe de ser 0
 (define (contarVerticalArriba i numjugador x y matriz)
   (cond((equal? 3 i) 0)
        ((not (miembro? (encontrar x (- y 1) matriz) numjugador)) 0)
        (else (+ 1 (contarVerticalArriba (+ i 1) numjugador x (- y 1) matriz)))))
 
+;;Esta funcion se encarga de contar los elementos de tipo numjugador que esten diagonalmente arriba a la derecha del punto (x,y) en la matriz.
+;El indice inicial debe de ser 0
 (define (contarDiagArrDer i numjugador x y matriz)
   (cond((equal? 3 i) 0)
        ((not (miembro? (encontrar (+ x 1) (- y 1) matriz) numjugador)) 0)
        (else (+ 1 (contarDiagArrDer (+ i 1) numjugador (+ x 1) (- y 1) matriz)))))
 
+;;Esta funcion se encarga de contar los elementos de tipo numjugador que esten diagonalmente abajo a la izquierda del punto (x,y) en la matriz.
+;El indice inicial debe de ser 0
 (define (contarDiagAbaIzq i numjugador x y matriz)
   (cond((equal? 3 i) 0)
        ((not (miembro? (encontrar (- x 1) (+ y 1) matriz) numjugador)) 0)
        (else (+ 1 (contarDiagAbaIzq (+ i 1) numjugador (- x 1) (+ y 1) matriz)))))
 
+;;Esta funcion se encarga de contar los elementos de tipo numjugador que esten diagonalmente arriba a la izquierda del punto (x,y) en la matriz.
+;El indice inicial debe de ser 0
 (define (contarDiagArrIzq i numjugador x y matriz)
   (cond((equal? 3 i) 0)
        ((not (miembro? (encontrar (- x 1) (- y 1) matriz) numjugador)) 0)
        (else (+ 1 (contarDiagArrIzq (+ i 1) numjugador (- x 1) (- y 1) matriz)))))
 
+;;Esta funcion se encarga de contar los elementos de tipo numjugador que esten diagonalmente abajo a la derecha del punto (x,y) en la matriz.
+;El indice inicial debe de ser 0
 (define (contarDiagAbaDer i numjugador x y matriz)
   (cond((equal? 3 i) 0)
        ((not (miembro? (encontrar (+ x 1) (+ y 1) matriz) numjugador)) 0)
        (else (+ 1 (contarDiagAbaDer (+ i 1) numjugador (+ x 1) (+ y 1) matriz)))))
 
+;;Esta funcion se encarga de contar los elementos de tipo numjugador que esten horizontales del punto (x,y) en la matriz.
 (define (puntosHorizontal numjugador x y matriz)
   (cond ((< 2 (+ (contarHorizontalDerecha 0 (list numjugador 0) x y matriz) (contarHorizontalIzquierda 0 (list numjugador 0) x y matriz)))
               (+ (contarHorizontalDerecha 0 (list numjugador) x y matriz) (contarHorizontalIzquierda 0 (list numjugador) x y matriz)))
         (else 0)))
-            
+
+;;Esta funcion se encarga de contar los elementos de tipo numjugador que esten verticales del punto (x,y) en la matriz.            
 (define (puntosVerticales numjugador x y matriz)
   (cond ((< 2 (+ (contarVerticalAbajo 0 (list numjugador) x y matriz) (contarVerticalArriba 0 (list 0) x y matriz)))
               (contarVerticalAbajo 0 (list numjugador) x y matriz))
         (else 0)))
 
+
+;;Esta funcion se encarga de contar los elementos de tipo numjugador que esten diagonales con derivada positiva del punto (x,y) en la matriz.
 (define (puntosDiagonalesPos numjugador x y matriz)
   (cond ((< 2 (+ (contarDiagArrDer 0 (list numjugador 0) x y matriz) (contarDiagAbaIzq 0 (list numjugador 0) x y matriz)))
               (+ (contarDiagArrDer 0 (list numjugador) x y matriz) (contarDiagAbaIzq 0 (list numjugador) x y matriz)))
         (else 0)))
 
+;;Esta funcion se encarga de contar los elementos de tipo numjugador que esten diagonales con derivada negativa del punto (x,y) en la matriz.
 (define (puntosDiagonalesNeg numjugador x y matriz)
   (cond ((< 2 (+ (contarDiagAbaDer 0 (list numjugador 0) x y matriz) (contarDiagArrIzq 0 (list numjugador 0) x y matriz)))
               (+ (contarDiagAbaDer 0 (list numjugador) x y matriz) (contarDiagArrIzq 0 (list numjugador) x y matriz)))
         (else 0)))
 
+;;Esta funcion se encarga de contar los elementos de tipo numjugador que esten cercanos del punto (x,y) en la matriz,
+;y los devuelve en una lista de acuerdo a su tipo
 (define (listaPuntosTotal numjugador x y matriz)
   (cond((equal? y -1) '(-1 -1 -1 -1))
        (else
@@ -282,41 +305,51 @@
                             (puntosDiagonalesPos numjugador x y matriz)
                             (puntosDiagonalesNeg numjugador x y matriz))))))
 
+;;Esta funcion se encarga de generar una matriz con el resumen de las listas de puntos para cada columna
 (define (generarMatrizDePuntos i numjugador posicionesY matriz)
   (cond ((null? posicionesY) '())
         (else (cons (listaPuntosTotal numjugador i (car posicionesY) matriz)
                     (generarMatrizDePuntos (+ i 1) numjugador (cdr posicionesY) matriz)))))
 
+;;Esta funcion devuelve una lista de los primeros elementos de cada fila de una matriz
 (define (obtenerPrimeros matriz)
   (cond ((null? matriz) '())
         (else (cons (caar matriz) (obtenerPrimeros (cdr matriz))))))
-        
+
+;;Esta funcion elimina los primeros elementos de cada fila de una matriz
 (define (eliminarPrimeros matriz)
   (cond ((null? matriz) '())
         (else (cons (cdar matriz) (eliminarPrimeros (cdr matriz))))))
 
+;;Esta funcion calcula la transpuesta de una matriz
 (define (transpuesta matriz)
   (cond ((null? (car matriz)) '())
         (else (cons (obtenerPrimeros matriz) (transpuesta (eliminarPrimeros matriz))))))
 
+;;Esta funcion busca el indice de un elemento (ele) en una lista
+; El indice i debe ser 0
 (define (buscarIndices i ele lista)
   (cond((null? lista) '())
        ((equal? ele (car lista)) (cons i (buscarIndices (+ i 1) ele (cdr lista))))
        (else (buscarIndices (+ i 1) ele (cdr lista)))))
 
+
+;;Esta funcion devuelve los indices de las columnas que tienen el mayor sencillo(el puntaje de su mejor cualidad (diagonal, horizontal, vertical))
 (define (mayorPosicionSimple listaDeMayores)
   (buscarIndices 0 (car (quicksort listaDeMayores)) listaDeMayores))
 
 
-;Nota, hay que pasarle la matriz debugeada
+;;Esta funcion selecciona el correcto indice de columna al cual se debe ir de acuerdo a la funcion que califica
 (define (selector numAI numjugador matriz)
   (selectorAux 
                (generarMatrizDePuntos 0 numAI (posicionesY 0 (car matriz) matriz) matriz)
                (generarMatrizDePuntos 0 numjugador (posicionesY 0 (car matriz) matriz) matriz)))
 
+;;Esta funcion es auxiliar del selector y se encarga de llamar al selector real con los resumenes de puntos
 (define (selectorAux puntosAI puntosJugador)
   (selectorAux2 (transpuesta puntosAI) (transpuesta puntosJugador) ))
-  
+
+;;Esta funcion es auxiliar del selector y se encarga de llamar al selector real con los resumenes de puntos y con los indices de las mejores posiciones
 (define (selectorAux2 transpuestaAI transpuestaJugador)
    (selectorAux3 transpuestaAI
                  (mayorPosicionSimple (car transpuestaAI))
@@ -325,6 +358,7 @@
                  (mayorPosicionSimple (car transpuestaJugador))
                  (posicion (car (mayorPosicionSimple (car transpuestaJugador))) (car transpuestaJugador))))
 
+;;Esta funcion es auxiliar del selector y se encarga de seleccionar a cual columna ir
 (define (selectorAux3 transpuestaAI mayoresAI mayorAI transpuestaJugador mayoresJugador mayorJ)
   (cond ((> mayorAI 2) (car mayoresAI)) 
         ((> mayorJ 2) (posicion (selectorAux4Ju transpuestaAI mayoresAI transpuestaJugador mayoresJugador) mayoresJugador))
@@ -334,46 +368,35 @@
         ((equal? mayorJ 1) (posicion (selectorAux4Ju transpuestaAI mayoresAI transpuestaJugador mayoresJugador) mayoresJugador))
         (else 0)))
 
+;;Esta funcion es auxiliar del selector y se encarga de llamar a una segunda comparacion debido a que hubo empate(cuando se decidio por atacar)
 (define (selectorAux4AI transpuestaAI mayoresAI transpuestaJugador mayoresJugador)
   (cond ((null? (cdr mayoresAI)) 0)
         (else (selectorAux2 (reducirPrimera (transpuesta (posiciones mayoresAI (transpuesta transpuestaAI))))
                             (transpuesta (posiciones mayoresAI (transpuesta transpuestaJugador)))))))
-
+;;Esta funcion es auxiliar del selector y se encarga de llamar a una segunda comparacion debido a que hubo empate(cuando se decidio por defender)
 (define (selectorAux4Ju transpuestaAI mayoresAI transpuestaJugador mayoresJugador)
   (cond ((null? (cdr mayoresJugador)) 0)
         (else (selectorAux2 (transpuesta (posiciones mayoresJugador (transpuesta transpuestaAI)))
                             (reducirPrimera (transpuesta (posiciones mayoresJugador (transpuesta transpuestaJugador))))))))
 
+;;Esta funcion se encarga de mandar al fondo las posiciones que fueron descartadas
 (define (reducirPrimera matrix)
   (append (cdr matrix) (list (copiarceros(car matrix)))))
-  
+
+;;Esta funcion se encarga de modificar las posiciones que fueron descartadas por ceros
 (define (copiarceros lista)
   (cond ((null? lista) '())
         (else (cons 0 (copiarceros (cdr lista))))))
 
-(define (seleccionarColAI matriz)
-  (selector 2 1 matriz))
-
-;-------------------------------------------------------------------;
-(define (convertidor indice matrizTranspuesta)
-  (cond ((null? matrizTranspuesta) 0)
-        ((not(equal? (caar matrizTranspuesta) 0)) (+ 1 (convertidor indice (cdr matrizTranspuesta))))
-        ((equal? indice 0) 0)
-        (else (+ 1 (convertidor (- indice 1) (cdr matrizTranspuesta))))))
-         
-;----------------------------------------------------------------------------------------------------------------;
-;Debugeador de matriz 
-
-
+;;Esta funcion se encarga de devolver una lista con el indice de la mayor posicion desocupada en cada columna
 (define (posicionesY i linea0 matriz)
   (cond ((null? linea0) '())
         (else (cons (posY? i 0 matriz) (posicionesY (+ i 1) (cdr linea0) matriz)))))
 
+;;Esta funcion es el algoritmo greedy para seleccionar la columna escogida por la computadora
+(define (seleccionarColAI matriz)
+  (selector 2 1 matriz))
 
-(define (matrizDebugeada matriztranspuesta)
-  (cond ((null? matriztranspuesta) '())
-        ((not (equal? (caar matriztranspuesta) 0)) (matrizDebugeada (cdr matriztranspuesta)) )
-        (else (cons (car matriztranspuesta) (matrizDebugeada (cdr matriztranspuesta))))))
 ;---------------------------------------------------------------------------------------------------------;
   
 ;; Funcion miembro?: Devuelve un valor booleano que indica si el elemento dado esta en la lista dada.
@@ -428,20 +451,22 @@
         (dibujarC (* 50 (seleccionarColAI matriz)) (* 50 (posY? (seleccionarColAI matriz) 0 matriz)) )
         (mainAux2 (insertarMatriz (seleccionarColAI matriz) 2 matriz)))))
 
-
+;;Esta funcion se encarga de manejar el turno del computador
 (define(mainAux2 matriz)
   (pretty-print matriz)
   (cond((empate? (car matriz))(send p3 show #t))
        ((hayGanadorComputadora? matriz)(send p2 show #t))
        (else (mainAux3 matriz (- (juego (car (tamano)) (colorJ)) 1) (colorJ)))))
 
+
+;;Esta funcion se encarga de manejar el turno del jugador
 (define(mainAux3 matriz x color)
   (cond ((equal? (posY? x 0 matriz) -1) (mainAux2 matriz)) 
         (else
             (dibujarP (* 50 x ) (* 50 (posY? x 0 matriz)) color )
             (mainAux1 (insertarMatriz x 1 matriz)))))
         
-;Funcion que envie matriz MxN
+;Esta funcion llama a la creacion de la matriz y al inicio del juego
 (define(main)
   (mainAux2 (crearMatriz (car (tamano)) (cadr (tamano)))))
 
