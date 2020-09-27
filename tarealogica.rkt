@@ -3,7 +3,8 @@
 (require "tareagrafica.rkt")
 
 ;------------------------------------------------------------------------------------------------------------------------------------------------
-;Funcion para crear las columnas 
+;Funcion para crear las columnas
+
 (define (crearColumnas mCont)
   (cond ((= 0 mCont) '())
        (else
@@ -18,34 +19,42 @@
 ;-------------------------------------------------------------------------------------------------------------------------------------------------
 ;Insertar Ficha
 
+; Encuentra el valor de X,Y en la matriz, esta recive la posX y posY y una Matriz  
+;la funcion devuelve el valor del entero en esas possiciones
+
 (define (encontrar x y matriz)
   (posicion x (posicion y matriz)))
-  
+
+;El recive una lista y una posicion esta funcion devuelve el valor en la posicion
 (define (posicion i lista)
   (cond((null? lista) '())
        ((equal? 0 i) (car lista))
        (else (posicion (- i 1) (cdr lista)))))
 
+;Recive una columna un valor que sera un contador y una matriz 
+;el hace un contador sobre la matriz donde devulve la ultima fila donde existe un cero o una poscion vacia en esa columna 
 (define(posY? nColum valor matriz)
   (cond((or (null? matriz) (> (encontrar nColum 0 matriz) 0))
       (- valor 1))
         (else
          (posY? nColum (+ valor 1) (cdr matriz)))))
 
+;Funcion para insertar un valor en una lista  la cual recive una columna , el valor y la lista
+;Este intercambia el valor que se encuntra en la lista en la poscion en  X e introduce el nuevo parametro
 (define(valorLista posX valor lista)
   (cond((zero? posX)
         (cons valor (cdr lista)))
        (else
         (cons (car lista) (valorLista (- posX 1) valor (cdr lista))))))
-
-
+;Funcion para insertar un valor en una matriz la cual recive una columna y una fila el valor y la matriz
+;Este intercambia el valor que se encuntra en la matriz en las posciones X, Y e introduce el nuevo parametro
 (define(valorMatriz posX posY valor matriz)
   (cond((zero? posY)
         (cons (valorLista posX valor (car matriz))(cdr matriz)))
         (else
          (cons (car matriz) (valorMatriz posX (- posY 1) valor (cdr matriz))))))
 
-  
+;Funcion para insertar un valor en una matriz la cual recive una columna el valor y la matriz
 (define(insertarMatriz posX valor matriz)
   (valorMatriz posX (posY? posX 0 matriz) valor matriz))  
 
